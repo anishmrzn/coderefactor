@@ -1,0 +1,49 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.eggs/
+dist/
+build/
+*.egg-info
+*.egg
+*.whl
+*.pyproject
+.pypackage
+
+# Environments
+venv/
+env/
+*/.venv/
+*/env/
+**/__pycache__
+# IDE Specific
+.vscode/
+.idea/
+*.suo
+*.njsproj
+*.user
+*.swp
+.DS_Store
+
+# Log files and temp files
+*.log
+*.tmp
+*.out
+*.bak
+*.swp
+*.pt
+*.pth
+
+# OS Specific
+*.swp
+.DS_Store
+thumbs.db
+
+# Dataset files
+data/
+
+# virtual environment
+med/
