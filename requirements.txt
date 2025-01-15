@@ -6,3 +6,5 @@ scikit-image
 numpy
 pillow
 matplotlib
+opencv-python
+opencv-python-headless

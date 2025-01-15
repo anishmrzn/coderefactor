@@ -7,7 +7,7 @@ from models.resnet import ResNet
 from utils.helper import load_image, class_names
 from optimizers.optimizers import get_optimizer
 from transforms.transforms import transform_train, transform_test
-from trainer.trainer import train_model, evaluate_model, calculate_and_visualize_explanations
+from trainer.trainer import train_model, evaluate_model
 import os
 import numpy as np
 from PIL import Image
