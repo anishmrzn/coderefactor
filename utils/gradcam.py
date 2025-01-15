@@ -1,9 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 class GradCAM:
     def __init__(self, model, target_layer):
@@ -40,6 +39,7 @@ class GradCAM:
         cam = cam / (cam.max() + 1e-8)
         return cam.cpu().detach().numpy()
 
+
 def overlay_heatmap(original_image, heatmap):
     if heatmap is None:
         print("Heatmap is None")
@@ -49,13 +49,11 @@ def overlay_heatmap(original_image, heatmap):
         print(f"Error: Could not load image.")
         return None
       
-    heatmap = (heatmap * 255).astype(np.uint8)
-    heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+    heatmap_image = Image.fromarray((heatmap * 255).astype(np.uint8))
+    heatmap_image = heatmap_image.convert("RGB").resize(original_image.shape[1::-1], Image.Resampling.BILINEAR)
 
-    if original_image.shape[-1] == 3:
-        original_image = cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR)
-    
-    heatmap = cv2.resize(heatmap, (original_image.shape[1], original_image.shape[0]))
 
-    overlay = cv2.addWeighted(original_image, 0.5, heatmap, 0.5, 0)
-    return overlay
+    original_image = Image.fromarray(original_image).convert("RGB")
+
+    overlay = Image.blend(original_image, heatmap_image, 0.5)
+    return np.array(overlay)
