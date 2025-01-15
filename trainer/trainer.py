@@ -4,12 +4,11 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 from utils.helper import load_image, class_names
 import numpy as np
-from skimage.segmentation import slic
 from visualizations.visualizer import visualize_superpixels
 from utils.gradcam import GradCAM, overlay_heatmap
 import torch.nn.functional as F
 import cv2
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from PIL import Image
 
 def train_model(net, train_loader, optimizer, criterion, num_epochs, device):
@@ -50,24 +49,20 @@ def calculate_and_visualize_explanations(net, image_paths, class_names, device, 
     net.eval()
     target_layer = net.layer4[-1]
     grad_cam = GradCAM(net, target_layer)
-
     images_to_explain = [load_image(img,device) for img in image_paths]
-    
-    visualize_superpixels(images_to_explain, segments_slic)
 
+    for i, image in enumerate(images_to_explain):
+        output = net(image)
+        _, predicted = torch.max(output, 1)
+        class_idx = predicted.item()
+        print(f'Image {i}: Predicted class index: {class_idx}, Predicted class name: {class_names[class_idx]}')
 
-    for i in range(len(images_to_explain)):
-      
-        with torch.no_grad():
-            output = net(images_to_explain[i])
-            _, predicted = torch.max(output, 1)
-            print(f'Image {i}: Predicted class index: {predicted.item()}, Predicted class name: {class_names[predicted.item()]}')
-
-        heatmap = grad_cam.generate_heatmap(predicted.item())
+        net.zero_grad()
+        output[0, class_idx].backward()
+        heatmap = grad_cam.generate_heatmap(class_idx)
         overlay = overlay_heatmap(image_paths[i], heatmap)
 
-
         plt.imshow(overlay)
-        plt.title(f"Prediction: {class_names[predicted.item()]} ")
+        plt.title(f"Prediction: {class_names[class_idx]} ")
         plt.axis("off")
         plt.show()

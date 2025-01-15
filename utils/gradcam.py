@@ -31,17 +31,13 @@ class GradCAM:
         return cam.cpu().detach().numpy()
 
 def overlay_heatmap(image_path, heatmap):
-    original_image = Image.open(image_path)  
-    original_image = np.array(original_image)
+    original_image = cv2.imread(image_path)
 
     heatmap = (heatmap * 255).astype(np.uint8)
-
     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
 
-    if len(original_image.shape) == 2:
-        original_image = cv2.cvtColor(original_image, cv2.COLOR_GRAY2BGR)
-    elif original_image.shape[2] == 3:
-        original_image = cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR)
+    if original_image.shape[-1] == 3:
+       original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
 
     heatmap = cv2.resize(heatmap, (original_image.shape[1], original_image.shape[0]))
 
