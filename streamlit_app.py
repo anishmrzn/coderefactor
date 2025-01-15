@@ -44,7 +44,6 @@ def predict_and_explain(image, net, image_path):
     
     st.write(f'Predicted class index: {class_idx}, Predicted class name: {class_names[class_idx]}')
 
-
     net_for_gradcam = ResNet(num_classes=10).to(device)
     net_for_gradcam.load_state_dict(net.state_dict())
 
@@ -58,8 +57,8 @@ def predict_and_explain(image, net, image_path):
     overlay = utils.gradcam.overlay_heatmap(original_image, heatmap)
 
     if overlay is not None:
-      overlay_rgb = cv2.cvtColor(overlay, cv2.COLOR_BGR2RGB)
-      st.image(overlay_rgb, caption='Grad-CAM Heatmap', use_column_width=True)
+        overlay_image = Image.fromarray(overlay) 
+        st.image(overlay_image, caption='Grad-CAM Heatmap', use_column_width=True)
     else:
       st.write("Could not generate Grad-CAM Heatmap")
 
