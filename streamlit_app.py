@@ -9,7 +9,6 @@ from optimizers.optimizers import get_optimizer
 from transforms.transforms import transform_train, transform_test
 from trainer.trainer import train_model, evaluate_model, calculate_and_visualize_explanations
 import os
-import cv2
 import numpy as np
 from PIL import Image
 
