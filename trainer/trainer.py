@@ -7,7 +7,6 @@ import numpy as np
 from visualizations.visualizer import visualize_superpixels
 from utils.gradcam import GradCAM, overlay_heatmap
 import torch.nn.functional as F
-import cv2
 import matplotlib.pyplot as plt
 from PIL import Image
 
@@ -59,10 +58,16 @@ def calculate_and_visualize_explanations(net, image_paths, class_names, device, 
 
         net.zero_grad()
         output[0, class_idx].backward()
-        heatmap = grad_cam.generate_heatmap(class_idx)
-        overlay = overlay_heatmap(image_paths[i], heatmap)
+        heatmap = grad_cam.generate_heatmap(image, class_idx)
+        
+        # Load the image using PIL
+        original_image = Image.open(image_paths[i])
+        original_image = np.array(original_image)
+      
+        overlay = overlay_heatmap(original_image, heatmap)
 
-        plt.imshow(overlay)
-        plt.title(f"Prediction: {class_names[class_idx]} ")
-        plt.axis("off")
-        plt.show()
+        if overlay is not None:
+            plt.imshow(overlay)
+            plt.title(f"Prediction: {class_names[class_idx]} ")
+            plt.axis("off")
+            plt.show()
