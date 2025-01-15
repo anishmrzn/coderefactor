@@ -1,12 +1,9 @@
-shap
-optuna
 torch
 torchvision
-opencv-python
-scikit-learn
+optuna
+streamlit
 scikit-image
-matplotlib
+opencv-python==4.8.0.76
 numpy
-Pillow
-numba
-imageio
+pillow
+matplotlib
