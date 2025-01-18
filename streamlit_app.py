@@ -16,11 +16,12 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 MODEL_SAVE_PATH = 'best_resnet_model.pth'
 
 
+@st.cache_resource
 def load_model():
     net = ResNet(num_classes=10).to(device)
     if os.path.exists(MODEL_SAVE_PATH):
-        print("Loading pre-trained model...")
-        net.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
+         print("Loading pre-trained model...")
+         net.load_state_dict(torch.load(MODEL_SAVE_PATH))
     else:
         print("Training model from scratch...")
         train_data = CIFAR10(root='./data', train=True, transform=transform_train, download=True)
@@ -32,7 +33,6 @@ def load_model():
         net = train_model(net, train_loader, optimizer, criterion, num_epochs=30, device=device)
         torch.save(net.state_dict(), MODEL_SAVE_PATH)
     return net
-
 
 
 def predict_and_explain(image, net, image_path):
@@ -70,10 +70,7 @@ def main():
     if uploaded_file is not None:
         try:
           
-          image_path = f"temp_{uploaded_file.name}" 
-          with open(image_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
+          image_path = uploaded_file.name  
           image_pil = Image.open(uploaded_file)
           
           
